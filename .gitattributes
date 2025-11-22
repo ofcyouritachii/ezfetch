@@ -1,0 +1,26 @@
+# Git attributes for ezfetch
+
+# Set default behavior to automatically normalize line endings
+* text=auto
+
+# Python files
+*.py text eol=lf diff=python
+
+# Shell scripts
+*.sh text eol=lf
+
+# Documentation
+*.md text eol=lf
+*.txt text eol=lf
+
+# JSON files
+*.json text eol=lf
+
+# Exclude files from export
+.gitignore export-ignore
+.gitattributes export-ignore
+.github/ export-ignore
+*.md linguist-documentation
+
+# Mark Python as the primary language
+*.py linguist-language=Python
