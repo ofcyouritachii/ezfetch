@@ -1,7 +1,11 @@
-def get_logo():
-    import platform
+import platform
+from typing import Optional
+from pathlib import Path
 
-    arch_logo = r"""                     
+
+# Logo definitions
+LOGOS = {
+    "arch": r"""                     
                   -`                     
                  .o+`                    
                 `ooo/                    
@@ -20,9 +24,9 @@ def get_logo():
   `/ossssso+/:-        -:/+osssso+-      
  `+sso+:-`                 `.-/+oso:     
 `++:.                           `-/+/    
-.`                                 `/    """
+.`                                 `/    """,
 
-    debian_logo = r"""
+    "debian": r"""
        _,met$$$$$gg.
     ,g$$$$$$$$$$$$$$$P.
   ,g$$P\"     \"\"\"Y$$.".
@@ -39,9 +43,9 @@ def get_logo():
      `$$b.
        `Y$$b.
           `\"Y$b._
-              `\"\"\"\" """
+              `\"\"\"\" """,
 
-    ubuntu_logo = r"""
+    "ubuntu": r"""
             .-/+oossssoo+/-.
         `:+ssssssssssssssssss+:`
       -+ssssssssssssssssssyyssss+-
@@ -61,9 +65,9 @@ ssssssssssssssssssssssssssssssssssssssssss
     .ossssssssssssssssssssssssssssso.
       -+sssssssssssssssssssssssss+-
         `:+ssssssssssssssssss+:`
-            .-/+oossssoo+/-."""
+            .-/+oossssoo+/-.""",
 
-    mint_logo = r"""
+    "mint": r"""
  MMMMMMMMMMMMMMMMMMMMMMMMMmds+.
  MMm----::-://////////////oymNMd+`
  MMd      /++                -sNMd:
@@ -79,9 +83,9 @@ ssssssssssssssssssssssssssssssssssssssssss
       -dMNs-``-::::-------.``    dMM
        `/dMNmy+/:-------------:/yMMM
           ./ydNMMMMMMMMMMMMMMMMMMMMM
-             .MMMMMMMMMMMMMMMMMMM"""
+             .MMMMMMMMMMMMMMMMMMM""",
 
-    mac_logo = r"""
+    "mac": r"""
                     'c.
                  ,xNMM.
                .OMMMMo
@@ -98,9 +102,9 @@ ssssssssssssssssssssssssssssssssssssssssss
   .XMMMMMMMMMMMMMMMMMMMMMMMMK.
     kMMMMMMMMMMMMMMMMMMMMMMd
      ;KMMMMMMMWXXWMMMMMMMk.
-       .cooc,.    .,coo:."""
+       .cooc,.    .,coo:.""",
 
-    windows_logo = r"""                                   
+    "windows": r"""                                   
                                 ..,
                     ....,,:;+ccllll
       ...,,+:;  cllllllllllllllllll
@@ -118,9 +122,9 @@ llllllllllllll  lllllllllllllllllll
 llllllllllllll  lllllllllllllllllll
 `'ccllllllllll  lllllllllllllllllll
        `' \*::  :ccllllllllllllllll
-                       ````''*::cll"""
-
-    fedora_logo = r"""
+                       ````''*::cll""",
+    
+    "fedora": r"""
           /:-------------:\          
        :-------------------::       
      :-----------/shhOHbmp---:\     
@@ -137,9 +141,9 @@ llllllllllllll  lllllllllllllllllll
 :-- :dMNdhhdNMMNo------------;
 :---:sdNMMMMNds:------------:
 :------:://:-------------::
-:---------------------://"""
+:---------------------://""",
 
-    redhat_logo = r"""                                   .
+    "redhat": r"""                                   .
            .MMM..:MMMMMMM                   
           MMMMMMMMMMMMMMMM                  
           MMMMMMMMMMMMMMMMMM.              
@@ -157,9 +161,9 @@ MMMMMMMMMMM.                     MM
       MMMMMMMMMMMMMMMMMMMMM'              
          MMMMMMMMMMMMMMMM'                     
             `MMMMMMMM'                 
-                                        """
-
-    manjaro_logo = r"""
+                                        """,
+    
+    "manjaro": r"""
 ██████████████████  ████████
 ██████████████████  ████████
 ██████████████████  ████████
@@ -173,32 +177,174 @@ MMMMMMMMMMM.                     MM
 ████████  ████████  ████████
 ████████  ████████  ████████
 ████████  ████████  ████████
-████████  ████████  ████████"""
+████████  ████████  ████████""",
+    
+    "popos": r"""
+             /////////////
+         /////////////////////
+      ///////*767////////////////
+    //////7676767676*//////////////
+   /////76767//7676767//////////////
+  /////767676///*76767///////////////
+ ///////767676///76767.///7676*///////
+/////////767676//76767///767676////////
+//////////76767676767////76767/////////
+///////////76767676//////7676//////////
+////////////,7676,///////767///////////
+/////////////*7676///////76////////////
+///////////////7676////////////////////
+ ///////////////7676///767////////////
+  //////////////////////'////////////
+   //////.7676767676767676767,//////
+    /////767676767676767676767/////
+      ///////////////////////////
+         /////////////////////
+             /////////////""",
+    
+    "alpine": r"""
+       .hddddddddddddddddddddddh.
+      :dddddddddddddddddddddddddd:
+     /dddddddddddddddddddddddddddd/
+    +dddddddddddddddddddddddddddddd+
+  `sdddddddddddddddddddddddddddddddds`
+ `ydddddddddddd++hdddddddddddddddddddy`
+.hddddddddddd+`  `+ddddh:-sdddddddddddh.
+hdddddddddd+`      `+y:    .sddddddddddh
+ddddddddh+`   `//`   `.`     -sddddddddd
+ddddddh+`   `/hddh/`   `:s-    -sddddddd
+ddddh+`   `/+/dddddh/`   `+s-    -sddddd
+ddd+`   `/o` :dddddddh/`   `oy-    .yddd
+hdddyo+ohddyosdddddddddho+oydddy++ohdddh
+.hddddddddddddddddddddddddddddddddddddh.
+ `yddddddddddddddddddddddddddddddddddy`
+  `sdddddddddddddddddddddddddddddddds`
+    +dddddddddddddddddddddddddddddd+
+     /dddddddddddddddddddddddddddd/
+      :dddddddddddddddddddddddddd:
+       .hddddddddddddddddddddddh.""",
+    
+    "gentoo": r"""
+         -/oyddmdhs+:.
+     -odNMMMMMMMMNNmhy+-`
+   -yNMMMMMMMMMMMNNNmmdhy+-
+ `omMMMMMMMMMMMMNmdmmmmddhhy/`
+ omMMMMMMMMMMMNhhyyyohmdddhhhdo`
+.ydMMMMMMMMMMdhs++so/smdddhhhhdm+`
+ oyhdmNMMMMMMMNdyooydmddddhhhhyhNd.
+  :oyhhdNNMMMMMMMNNNmmdddhhhhhyymMh
+    .:+sydNMMMMMNNNmmmdddhhhhhhmMmy
+       /mMMMMMMNNNmmmdddhhhhhmMNhs:
+    `oNMMMMMMMNNNmmmddddhhdmMNhs+`
+  `sNMMMMMMMMNNNmmmdddddmNMmhs/.
+ /NMMMMMMMMNNNNmmmdddmNMNdso:`
++MMMMMMMNNNNNmmmmdmNMNdso/-
+yMMNNNNNNNmmmmmNNMmhs+/-`
+/hMMNNNNNNNNMNdhs++/-`
+`/ohdmmddhys+++/:.`
+  `-//////:--.""",
+    
+    "kali": r"""
+      ,.....                                       
+  ----`   `..,;:ccc,.                             
+           ......''';lxO.                          
+.....''''..........,:ld;                          
+           .';;;:::;,,.x,                          
+      ..'''.            0Xxoc:,.  ...              
+  ....                ,ONkc;,;cokOdc',.            
+ .                   OMo           ':do.           
+                    dMc               :OO;         
+                    0M.                 .:o.       
+                    ;Wd                            
+                     ;XO,                          
+                       ,d0Odlc;,..                 
+                           ..',;:cdOOd::,.         
+                                    .:d;.':;.      
+                                       'd,  .'     
+                                         ;l   ..   
+                                          .o       
+                                            c      
+                                            .'     
+                                             .""",
+}
 
+# Add aliases
+LOGOS["debian"] = LOGOS.get("debian", LOGOS["arch"])
+LOGOS["ubuntu"] = LOGOS.get("ubuntu", LOGOS["arch"])
+LOGOS["mint"] = LOGOS.get("mint", LOGOS["arch"])
+LOGOS["redhat"] = LOGOS.get("redhat", LOGOS["arch"])
+LOGOS["mac"] = LOGOS.get("mac", LOGOS["arch"])
+LOGOS["windows"] = LOGOS.get("windows", LOGOS["arch"])
+LOGOS["macos"] = LOGOS["mac"]
+LOGOS["darwin"] = LOGOS["mac"]
+LOGOS["pop"] = LOGOS["popos"]
+
+
+def detect_distro() -> str:
+    """
+    Detect the current Linux distribution
+    
+    Returns:
+        Distribution name in lowercase
+    """
     os_name = platform.system().lower()
+    
     if os_name == "linux":
         try:
             with open("/etc/os-release") as f:
                 os_release = f.read().lower()
-                if "arch" in os_release:
-                    return arch_logo
-                elif "debian" in os_release:
-                    return debian_logo
-                elif "ubuntu" in os_release:
-                    return ubuntu_logo
-                elif "mint" in os_release:
-                    return mint_logo
-                elif "fedora" in os_release:
-                    return fedora_logo
-                elif "red hat" in os_release:
-                    return redhat_logo
-                elif "manjaro" in os_release:
-                    return manjaro_logo
-                else:
-                    return arch_logo  # Default to Arch logo
-        except:
-            return arch_logo
+                
+                # Check for specific distributions
+                distros = [
+                    "arch", "ubuntu", "debian", "mint", "fedora",
+                    "manjaro", "popos", "pop", "alpine", "gentoo",
+                    "kali", "red hat", "redhat"
+                ]
+                
+                for distro in distros:
+                    if distro in os_release:
+                        return distro.replace(" ", "")
+        except FileNotFoundError:
+            pass
+        
+        return "arch"  # Default for Linux
+    
     elif os_name == "darwin":
-        return mac_logo
+        return "mac"
     elif os_name == "windows":
-        return windows_logo
+        return "windows"
+    
+    return "arch"
+
+
+def get_logo(logo_name: Optional[str] = None, custom_logo_path: Optional[str] = None) -> str:
+    """
+    Get ASCII art logo for current OS or specified logo
+    
+    Args:
+        logo_name: Name of logo to use (overrides detection)
+        custom_logo_path: Path to custom logo file
+    
+    Returns:
+        ASCII art logo as string
+    """
+    # Use custom logo if provided
+    if custom_logo_path:
+        try:
+            with open(custom_logo_path, "r") as f:
+                return f.read()
+        except (IOError, FileNotFoundError):
+            pass
+    
+    # Use specified logo or detect
+    distro = logo_name or detect_distro()
+    return LOGOS.get(distro.lower(), LOGOS["arch"])
+
+
+def list_logos() -> list:
+    """
+    Get list of available logo names
+    
+    Returns:
+        List of logo names
+    """
+    return sorted(set(LOGOS.keys()))
