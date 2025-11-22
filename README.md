@@ -28,10 +28,10 @@ Inspired by neofetch but with modern features, extensive customization, better p
 
 ## 📥 Installation
 
-### Quick Start (Recommended - Faster Download)
+### Quick Start (No Installation Required)
 
 ```bash
-# Shallow clone for faster download (only latest version)
+# Shallow clone for faster download (~2MB vs 25MB)
 git clone --depth 1 https://github.com/ofcyouritachii/ezfetch.git
 cd ezfetch
 python3 -m ezfetch
@@ -39,20 +39,43 @@ python3 -m ezfetch
 
 ### Install System-wide
 
+#### On Arch Linux / Manjaro:
 ```bash
-# Shallow clone for faster download
 git clone --depth 1 https://github.com/ofcyouritachii/ezfetch.git
 cd ezfetch
-pip install -e .
+# Install pip if needed
+sudo pacman -S python-pip
+# Install ezfetch
+pip install --user -e .
+# Or use python directly
+python3 -m ezfetch
+```
+
+#### On Ubuntu / Debian:
+```bash
+git clone --depth 1 https://github.com/ofcyouritachii/ezfetch.git
+cd ezfetch
+# Install pip if needed
+sudo apt install python3-pip
+# Install ezfetch
+pip3 install --user -e .
 ezfetch
 ```
 
-### Alternative: Full Clone
-
+#### On macOS:
 ```bash
-# If you need full git history
-git clone https://github.com/ofcyouritachii/ezfetch.git
+git clone --depth 1 https://github.com/ofcyouritachii/ezfetch.git
 cd ezfetch
+# pip3 is usually pre-installed
+pip3 install --user -e .
+ezfetch
+```
+
+#### Generic (Works Everywhere):
+```bash
+git clone --depth 1 https://github.com/ofcyouritachii/ezfetch.git
+cd ezfetch
+# Run directly without installation
 python3 -m ezfetch
 ```
 
@@ -63,7 +86,11 @@ python3 -m ezfetch
 ### Basic Usage
 
 ```bash
+# If installed system-wide
 ezfetch
+
+# If running without installation
+python3 -m ezfetch
 ```
 
 ### Command-Line Options
@@ -263,14 +290,18 @@ ezfetch --json | jq '.CPU'
 
 Add to `~/.bashrc` or `~/.zshrc`:
 ```bash
+# If installed
 ezfetch
+
+# If running from directory
+cd ~/ezfetch && python3 -m ezfetch
 ```
 
 ### System Monitoring Script
 
 ```bash
 #!/bin/bash
-ezfetch --json | jq '{CPU: .CPU, Memory: .Memory, Disk: .Disk}'
+python3 -m ezfetch --json | jq '{CPU: .CPU, Memory: .Memory, Disk: .Disk}'
 ```
 
 ### Custom Configuration
@@ -292,17 +323,78 @@ Create `~/.config/ezfetch/config.json`:
 
 ```bash
 # Minimal output
-ezfetch --no-logo --field OS --field CPU --field Memory
+python3 -m ezfetch --no-logo --field OS --field CPU --field Memory
 
 # Specific theme and logo
-ezfetch --logo ubuntu --theme nord
+python3 -m ezfetch --logo arch --theme nord
 
 # JSON with jq filtering
-ezfetch --json | jq '.CPU'
+python3 -m ezfetch --json | jq '.CPU'
 
 # Save system info
-ezfetch --json > system-info.json
+python3 -m ezfetch --json > system-info.json
 ```
+
+---
+
+## 🔧 Troubleshooting
+
+### "pip: command not found"
+
+**Arch Linux / Manjaro:**
+```bash
+sudo pacman -S python-pip
+```
+
+**Ubuntu / Debian:**
+```bash
+sudo apt install python3-pip
+```
+
+**Fedora:**
+```bash
+sudo dnf install python3-pip
+```
+
+**Alternative:** Run without installation:
+```bash
+python3 -m ezfetch
+```
+
+### "python3: command not found"
+
+**Install Python 3:**
+```bash
+# Arch Linux
+sudo pacman -S python
+
+# Ubuntu/Debian
+sudo apt install python3
+
+# Fedora
+sudo dnf install python3
+```
+
+### "ModuleNotFoundError: No module named 'psutil'"
+
+```bash
+# With pip
+pip3 install --user psutil
+
+# Arch Linux
+sudo pacman -S python-psutil
+
+# Ubuntu/Debian
+sudo apt install python3-psutil
+```
+
+### Clone is too slow / too large
+
+Use shallow clone for faster download:
+```bash
+git clone --depth 1 https://github.com/ofcyouritachii/ezfetch.git
+```
+This downloads only ~2MB instead of 25MB!
 
 ---
 
