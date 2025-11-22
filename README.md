@@ -28,7 +28,7 @@ Inspired by neofetch but with modern features, extensive customization, better p
 
 ## 📥 Installation
 
-### Quick Start (No Installation Required)
+### Quick Start (Recommended - Works Instantly!)
 
 ```bash
 # Shallow clone for faster download (~2MB vs 25MB)
@@ -37,18 +37,24 @@ cd ezfetch
 python3 -m ezfetch
 ```
 
+**That's it!** No pip, no dependencies installation needed. Just clone and run! 🚀
+
 ### Install System-wide
 
 #### On Arch Linux / Manjaro:
 ```bash
 git clone --depth 1 https://github.com/ofcyouritachii/ezfetch.git
 cd ezfetch
-# Install pip if needed
-sudo pacman -S python-pip
-# Install ezfetch
-pip install --user -e .
-# Or use python directly
+
+# Option 1: Run directly (Recommended - No installation needed)
 python3 -m ezfetch
+
+# Option 2: Install with pipx (Arch Linux best practice)
+sudo pacman -S python-pipx
+pipx install .
+
+# Option 3: System-wide with --break-system-packages (Not recommended)
+pip install --user --break-system-packages -e .
 ```
 
 #### On Ubuntu / Debian:
@@ -339,11 +345,36 @@ python3 -m ezfetch --json > system-info.json
 
 ## 🔧 Troubleshooting
 
+### "externally-managed-environment" error (Arch Linux)
+
+Modern Arch Linux uses PEP 668 to prevent pip conflicts. Solutions:
+
+**Best option - Run directly (no installation):**
+```bash
+python3 -m ezfetch
+```
+
+**Or use pipx (recommended for system-wide install):**
+```bash
+sudo pacman -S python-pipx
+pipx install .
+ezfetch
+```
+
+**Or use virtual environment:**
+```bash
+python3 -m venv ~/ezfetch-env
+source ~/ezfetch-env/bin/activate
+pip install -e .
+ezfetch
+```
+
 ### "pip: command not found"
 
 **Arch Linux / Manjaro:**
 ```bash
 sudo pacman -S python-pip
+# Or use pipx instead: sudo pacman -S python-pipx
 ```
 
 **Ubuntu / Debian:**
@@ -356,7 +387,7 @@ sudo apt install python3-pip
 sudo dnf install python3-pip
 ```
 
-**Alternative:** Run without installation:
+**Best alternative:** Run without installation:
 ```bash
 python3 -m ezfetch
 ```
